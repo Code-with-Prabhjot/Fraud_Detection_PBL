@@ -1,0 +1,20 @@
+# Compiled Executables
+*.exe
+*.out
+engine
+
+# Logs (keep repo clean from local live outputs)
+*.log
+live_audit.log
+fraud_alerts.log
+
+# Python cache and environments
+__pycache__/
+*.pyc
+.venv/
+env/
+instance/
+
+# OS files
+.DS_Store
+Thumbs.db
