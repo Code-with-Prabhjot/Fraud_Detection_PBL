@@ -9,202 +9,122 @@
             --threat-red: #ff003c;
             --bg-black: #050505;
             --panel-border: rgba(0, 255, 65, 0.3);
+            --neon-blue: #00f0ff;
         }
 
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Courier New', Courier, monospace; /* Strict terminal font */
-        }
+        * { box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
 
-        /* Radar Grid Background */
         body { 
-            margin: 0; 
-            min-height: 100vh; 
-            background-color: var(--bg-black);
-            color: var(--hacker-green);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 40px;
+            margin: 0; min-height: 100vh; background-color: var(--bg-black);
+            color: var(--hacker-green); display: flex; flex-direction: column; 
+            align-items: center; padding: 40px;
             background-image: 
                 linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            position: relative;
+            background-size: 30px 30px; position: relative;
         }
 
-        /* Scanning Line Animation */
         body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 5px;
-            background: var(--hacker-green);
-            opacity: 0.5;
-            box-shadow: 0 0 20px var(--hacker-green);
-            animation: scanLine 8s linear infinite;
-            z-index: -1;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: var(--hacker-green); opacity: 0.5;
+            box-shadow: 0 0 20px var(--hacker-green); animation: scanLine 8s linear infinite; z-index: -1;
         }
 
-        @keyframes scanLine {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
+        @keyframes scanLine { 0% { top: 0; } 100% { top: 100%; } }
 
         .header { 
-            text-align: center; 
-            margin-bottom: 40px; 
-            border: 1px solid var(--panel-border);
-            padding: 20px 40px;
-            background: rgba(0, 255, 65, 0.02);
-            text-transform: uppercase;
+            text-align: center; margin-bottom: 40px; border: 1px solid var(--panel-border);
+            padding: 20px 40px; background: rgba(0, 255, 65, 0.02); text-transform: uppercase;
         }
 
-        .header h1 { 
-            font-weight: bold; 
-            letter-spacing: 4px; 
-            font-size: 36px;
-            margin: 0 0 10px 0;
-            color: white;
-            text-shadow: 0 0 10px var(--hacker-green);
-        }
+        .header h1 { font-weight: bold; letter-spacing: 4px; font-size: 36px; margin: 0 0 10px 0; color: white; text-shadow: 0 0 10px var(--hacker-green); }
+        .header p { color: var(--hacker-green); font-size: 14px; margin: 0; }
 
-        .header p { 
-            color: var(--hacker-green); 
-            font-size: 14px; 
-            margin: 0;
-        }
+        .btn-container { display: flex; gap: 20px; margin-bottom: 30px; }
 
-        /* Mechanical Override Button */
-        .sweep-btn {
-            background: transparent;
-            border: 2px solid var(--threat-red); 
-            padding: 20px 50px; 
-            color: var(--threat-red);
-            font-size: 18px; 
-            font-weight: bold; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer; 
-            transition: all 0.2s;
-            margin-bottom: 50px;
-            box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.1);
-            border-radius: 0; /* Square edges */
-        }
-
-        .sweep-btn:hover { 
-            background: var(--threat-red);
-            color: var(--bg-black);
-            box-shadow: 0 0 30px var(--threat-red); 
-        }
-
-        /* Wireframe Dashboard */
-        .dashboard {
-            background: rgba(5, 5, 5, 0.9);
-            border: 1px solid var(--hacker-green);
-            padding: 40px; 
-            width: 100%; 
-            max-width: 1000px; 
-            display: none;
-            box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.1);
-        }
-
-        /* Stats Grid */
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
-            margin-bottom: 40px; 
-        }
-
-        .stat-card { 
-            border: 1px solid var(--panel-border);
-            padding: 20px; 
-            text-align: center;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(0, 255, 65, 0.02) 10px,
-                rgba(0, 255, 65, 0.02) 20px
-            );
-        }
-
-        .stat-value { 
-            font-size: 48px; 
-            font-weight: bold; 
-            color: white; 
-        }
-
-        .stat-label { 
-            color: var(--hacker-green); 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            letter-spacing: 3px; 
-            margin-top: 10px;
-        }
-
-        /* Terminal Table Design */
-        h3 {
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px dashed var(--hacker-green);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-        }
-
-        th { 
-            color: var(--hacker-green); 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            letter-spacing: 1px;
-            padding: 15px;
-            text-align: left;
-            border-bottom: 2px solid var(--hacker-green);
-        }
-
-        td { 
-            padding: 15px; 
-            border-bottom: 1px solid var(--panel-border);
-            color: white;
-        }
-
-        /* Flashing Fraud Row */
-        .fraud-row {
-            background: rgba(255, 0, 60, 0.1);
-            border-left: 4px solid var(--threat-red);
+        .sweep-btn, .tree-btn {
+            background: transparent; padding: 15px 30px; font-size: 16px; font-weight: bold; 
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border-radius: 0;
         }
         
-        .fraud-row td {
-            color: var(--threat-red);
+        .sweep-btn { border: 2px solid var(--threat-red); color: var(--threat-red); box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.1); }
+        .sweep-btn:hover { background: var(--threat-red); color: var(--bg-black); box-shadow: 0 0 30px var(--threat-red); }
+
+        .tree-btn { border: 2px solid var(--neon-blue); color: var(--neon-blue); box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.1); }
+        .tree-btn:hover { background: var(--neon-blue); color: var(--bg-black); box-shadow: 0 0 30px var(--neon-blue); }
+
+        .dashboard {
+            width: 100%; max-width: 1400px; display: none; animation: fadeIn 0.5s;
         }
 
-        .fraud-row td:first-child {
-            color: white;
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--panel-border); padding: 20px; text-align: center; box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.1); }
+        .stat-value { font-size: 48px; font-weight: bold; color: white; }
+        .stat-label { color: var(--hacker-green); text-transform: uppercase; font-size: 12px; letter-spacing: 3px; margin-top: 10px; }
 
-        /* Flashing Badge */
-        .badge { 
-            background: var(--threat-red); 
-            color: white;
-            padding: 4px 10px; 
+        /* Split Screen Tables */
+        .tables-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        
+        .table-wrapper {
+            background: rgba(5, 5, 5, 0.9); 
+            padding: 0 20px 20px 20px; /* FIX: Removed top padding to close the top gap */
+            height: 500px; 
+            overflow-y: auto;
+        }
+        
+        .fraud-wrapper { border: 1px solid var(--threat-red); box-shadow: inset 0 0 20px rgba(255, 0, 60, 0.1); }
+        .safe-wrapper { border: 1px solid var(--hacker-green); box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.1); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--hacker-green); }
+
+        h3 { 
+            color: white; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            border-bottom: 1px dashed; 
+            padding-top: 20px; /* FIX: Added solid padding to replace wrapper padding */
+            padding-bottom: 15px; /* FIX: Added solid padding to replace the margin */
+            margin: 0; /* FIX: Removed transparent margins */
+            position: sticky; 
+            top: 0; 
+            background: #050505; 
+            z-index: 11; /* Keep above table headers */
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-transform: uppercase; 
             font-size: 12px; 
-            font-weight: bold; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: flashAlert 1s infinite;
+            letter-spacing: 1px; 
+            padding: 10px; 
+            text-align: left; 
+            border-bottom: 1px solid #333; 
+            position: sticky; 
+            top: 54px; /* FIX: Snugs perfectly underneath the h3 without a gap */
+            background: #050505; 
+            z-index: 10;
         }
+        td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; font-size: 14px;}
+        
+        .fraud-row td { color: var(--threat-red); }
+        .fraud-row td:first-child { color: white; }
+        .safe-row td { color: var(--hacker-green); }
+        .safe-row td:first-child { color: white; }
 
-        @keyframes flashAlert { 
-            0%, 49% { opacity: 1; background: var(--threat-red); color: white;} 
-            50%, 100% { opacity: 0.8; background: transparent; border: 1px solid var(--threat-red); color: var(--threat-red);} 
-        }
+        .badge-fraud { background: var(--threat-red); color: white; padding: 4px 8px; font-size: 12px; font-weight: bold; border-radius: 3px; animation: flashAlert 1s infinite; }
+        .badge-safe { border: 1px solid var(--hacker-green); color: var(--hacker-green); padding: 4px 8px; font-size: 12px; font-weight: bold; border-radius: 3px;}
 
+        @keyframes flashAlert { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.8; background: transparent; color: var(--threat-red);} }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: #050505; border: 1px solid var(--neon-blue); width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; padding: 30px; box-shadow: 0 0 40px rgba(0, 240, 255, 0.2); position: relative; }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: var(--neon-blue); font-size: 24px; cursor: pointer; font-weight: bold; }
+        .tree-output { color: var(--neon-blue); white-space: pre; font-size: 14px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -214,13 +134,20 @@
         <p>[// CONNECTED TO NATIVE C-ENGINE KERNEL //]</p>
     </div>
 
-    <button class="sweep-btn" onclick="runSweep()">Execute Threat Sweep</button>
+    <div class="btn-container">
+        <button class="sweep-btn" onclick="runSweep()">Execute Threat Sweep</button>
+        <button class="tree-btn" onclick="openTreeModal()">[ Inspect Neural Tree ]</button>
+    </div>
 
     <div class="dashboard" id="dashboard">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="val-processed">0</div>
-                <div class="stat-label">System Rows Parsed</div>
+        <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="stat-card" style="border-color: var(--neon-blue);">
+                <div class="stat-value" id="val-processed" style="color: var(--neon-blue);">0</div>
+                <div class="stat-label" style="color: var(--neon-blue);">System Rows Parsed</div>
+            </div>
+            <div class="stat-card" style="border-color: var(--hacker-green);">
+                <div class="stat-value" id="val-safe" style="color: var(--hacker-green);">0</div>
+                <div class="stat-label" style="color: var(--hacker-green);">Cleared Safely</div>
             </div>
             <div class="stat-card" style="border-color: var(--threat-red);">
                 <div class="stat-value" id="val-frauds" style="color: var(--threat-red);">0</div>
@@ -228,20 +155,45 @@
             </div>
         </div>
 
-        <h3>[ ! ] Active Threat Log</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>TXN_ID</th>
-                    <th>Volume (INR)</th>
-                    <th>Time</th>
-                    <th>Vector</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                </tbody>
-        </table>
+        <div class="tables-container">
+            <div class="table-wrapper fraud-wrapper">
+                <h3 style="color: var(--threat-red); border-bottom-color: var(--threat-red);">[ ! ] FRAUD DETECTED</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="color: var(--threat-red);">TXN_ID</th>
+                            <th style="color: var(--threat-red);">Amount</th>
+                            <th style="color: var(--threat-red);">Category</th>
+                            <th style="color: var(--threat-red);">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body-fraud"></tbody>
+                </table>
+            </div>
+
+            <div class="table-wrapper safe-wrapper">
+                <h3 style="color: var(--hacker-green); border-bottom-color: var(--hacker-green);">[ ✓ ] SAFE CLEARANCE</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="color: var(--hacker-green);">TXN_ID</th>
+                            <th style="color: var(--hacker-green);">Amount</th>
+                            <th style="color: var(--hacker-green);">Category</th>
+                            <th style="color: var(--hacker-green);">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body-safe"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="treeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">[X]</span>
+            <h3 style="color: var(--neon-blue); border-bottom-color: var(--neon-blue);">C-Kernel Memory Map: ID3 Decision Tree</h3>
+            <div class="tree-output" id="treeOutput">Connecting to Neural Engine...</div>
+        </div>
     </div>
 
     <script>
@@ -251,38 +203,68 @@
             btn.style.pointerEvents = "none"; 
             
             fetch('/run_sweep', { method: 'POST' })
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
                 document.getElementById('dashboard').style.display = 'block';
                 
+                // Update all three scoreboards properly
                 document.getElementById('val-processed').innerText = data.processed;
+                document.getElementById('val-safe').innerText = parseInt(data.processed) - parseInt(data.frauds_count);
                 document.getElementById('val-frauds').innerText = data.frauds_count;
                 
-                const tbody = document.getElementById('table-body');
-                tbody.innerHTML = '';
-                
+                // Inject Fraud Rows
+                const fraudBody = document.getElementById('table-body-fraud');
+                fraudBody.innerHTML = '';
                 data.alerts.forEach(alert => {
                     const row = `<tr class="fraud-row">
                         <td>${alert.txn_id}</td>
                         <td style="font-weight: bold;">${alert.amount}</td>
-                        <td>${alert.time}</td>
                         <td>${alert.category}</td>
-                        <td><span class="badge">BREACH</span></td>
+                        <td><span class="badge-fraud">BREACH</span></td>
                     </tr>`;
-                    tbody.innerHTML += row;
+                    fraudBody.innerHTML += row;
+                });
+
+                // Inject Safe Rows
+                const safeBody = document.getElementById('table-body-safe');
+                safeBody.innerHTML = '';
+                data.safe.forEach(safe => {
+                    const row = `<tr class="safe-row">
+                        <td>${safe.txn_id}</td>
+                        <td style="font-weight: bold; color: white;">${safe.amount}</td>
+                        <td>${safe.category}</td>
+                        <td><span class="badge-safe">CLEARED</span></td>
+                    </tr>`;
+                    safeBody.innerHTML += row;
                 });
                 
                 btn.innerText = "SWEEP COMPLETED";
-                setTimeout(() => {
-                    btn.innerText = "Execute Threat Sweep";
-                    btn.style.pointerEvents = "auto";
-                }, 3000);
-            })
-            .catch(err => {
-                console.error("Error during sweep:", err);
-                btn.innerText = "ERR: KERNEL DISCONNECT";
-                btn.style.pointerEvents = "auto";
+                setTimeout(() => { btn.innerText = "Execute Threat Sweep"; btn.style.pointerEvents = "auto"; }, 3000);
             });
+        }
+
+        function openTreeModal() {
+            document.getElementById('treeModal').style.display = 'flex';
+            const output = document.getElementById('treeOutput');
+            
+            fetch('/api/tree')
+            .then(res => res.json())
+            .then(data => { output.innerHTML = buildAsciiTree(data, ""); })
+            .catch(err => { output.innerHTML = "ERR: UNABLE TO MOUNT KERNEL MAP"; });
+        }
+
+        function closeModal() { document.getElementById('treeModal').style.display = 'none'; }
+
+        function buildAsciiTree(node, prefix) {
+            if (!node) return "";
+            if (node.type === 'leaf') {
+                let color = node.name === 'Fraud' ? 'var(--threat-red)' : 'var(--hacker-green)';
+                return `<span style="color:${color}">[${node.name.toUpperCase()}]</span>\n`;
+            }
+            let html = `<b>${node.name} ?</b>\n`;
+            html += prefix + "├── (NO)  ── " + buildAsciiTree(node.children[0], prefix + "│   ");
+            html += prefix + "└── (YES) ── " + buildAsciiTree(node.children[1], prefix + "    ");
+            return html;
         }
     </script>
 </body>
