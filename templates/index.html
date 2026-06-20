@@ -53,21 +53,18 @@
         .tree-btn { border: 2px solid var(--neon-blue); color: var(--neon-blue); box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.1); }
         .tree-btn:hover { background: var(--neon-blue); color: var(--bg-black); box-shadow: 0 0 30px var(--neon-blue); }
 
-        .dashboard {
-            width: 100%; max-width: 1400px; display: none; animation: fadeIn 0.5s;
-        }
+        .dashboard { width: 100%; max-width: 1400px; display: none; animation: fadeIn 0.5s; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px; }
         .stat-card { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--panel-border); padding: 20px; text-align: center; box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.1); }
         .stat-value { font-size: 48px; font-weight: bold; color: white; }
         .stat-label { color: var(--hacker-green); text-transform: uppercase; font-size: 12px; letter-spacing: 3px; margin-top: 10px; }
 
-        /* Split Screen Tables */
         .tables-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         
         .table-wrapper {
             background: rgba(5, 5, 5, 0.9); 
-            padding: 0 20px 20px 20px; /* FIX: Removed top padding to close the top gap */
+            padding: 0 20px 20px 20px; 
             height: 500px; 
             overflow-y: auto;
         }
@@ -75,39 +72,28 @@
         .fraud-wrapper { border: 1px solid var(--threat-red); box-shadow: inset 0 0 20px rgba(255, 0, 60, 0.1); }
         .safe-wrapper { border: 1px solid var(--hacker-green); box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.1); }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--hacker-green); }
 
         h3 { 
-            color: white; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            border-bottom: 1px dashed; 
-            padding-top: 20px; /* FIX: Added solid padding to replace wrapper padding */
-            padding-bottom: 15px; /* FIX: Added solid padding to replace the margin */
-            margin: 0; /* FIX: Removed transparent margins */
-            position: sticky; 
-            top: 0; 
-            background: #050505; 
-            z-index: 11; /* Keep above table headers */
+            color: white; text-transform: uppercase; letter-spacing: 2px; 
+            border-bottom: 1px dashed; padding-top: 20px; padding-bottom: 15px; margin: 0; 
+            position: sticky; top: 0; background: #050505; z-index: 11;
         }
+
         table { width: 100%; border-collapse: collapse; }
         th { 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            letter-spacing: 1px; 
-            padding: 10px; 
-            text-align: left; 
-            border-bottom: 1px solid #333; 
-            position: sticky; 
-            top: 54px; /* FIX: Snugs perfectly underneath the h3 without a gap */
-            background: #050505; 
-            z-index: 10;
+            text-transform: uppercase; font-size: 12px; letter-spacing: 1px; padding: 10px; 
+            text-align: left; border-bottom: 1px solid #333; position: sticky; top: 54px; 
+            background: #050505; z-index: 10;
         }
+
         td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; font-size: 14px;}
+        
+        /* The new Reason Styling */
+        .reason-text { font-size: 11px; letter-spacing: 1px; opacity: 0.8; }
         
         .fraud-row td { color: var(--threat-red); }
         .fraud-row td:first-child { color: white; }
@@ -120,11 +106,38 @@
         @keyframes flashAlert { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.8; background: transparent; color: var(--threat-red);} }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: #050505; border: 1px solid var(--neon-blue); width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; padding: 30px; box-shadow: 0 0 40px rgba(0, 240, 255, 0.2); position: relative; }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: var(--neon-blue); font-size: 24px; cursor: pointer; font-weight: bold; }
-        .tree-output { color: var(--neon-blue); white-space: pre; font-size: 14px; line-height: 1.5; }
+        .modal-content { 
+            background: #050505; 
+            border: 1px solid var(--neon-blue); 
+            width: 90%; 
+            max-width: 800px; 
+            max-height: 80vh; 
+            display: flex; /* NEW: Flexbox keeps the layout rigid */
+            flex-direction: column; 
+            padding: 0 30px 30px 30px; /* NEW: Removed top padding to seal the gap */
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.2); 
+            position: relative; 
+        }
+        .close-btn { 
+            position: absolute; 
+            top: 20px; 
+            right: 25px; 
+            color: var(--neon-blue); 
+            font-size: 24px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            z-index: 50; /* NEW: Keeps the button locked above the text */
+        }
+        .tree-output { 
+            color: var(--neon-blue); 
+            white-space: pre; 
+            font-size: 14px; 
+            line-height: 1.5; 
+            overflow-y: auto; /* NEW: Forces ONLY the text to scroll */
+            flex-grow: 1; /* NEW: Expands perfectly to fill the modal */
+            margin-top: 10px; 
+        }
     </style>
 </head>
 <body>
@@ -140,7 +153,7 @@
     </div>
 
     <div class="dashboard" id="dashboard">
-        <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="stats-grid">
             <div class="stat-card" style="border-color: var(--neon-blue);">
                 <div class="stat-value" id="val-processed" style="color: var(--neon-blue);">0</div>
                 <div class="stat-label" style="color: var(--neon-blue);">System Rows Parsed</div>
@@ -163,7 +176,7 @@
                         <tr>
                             <th style="color: var(--threat-red);">TXN_ID</th>
                             <th style="color: var(--threat-red);">Amount</th>
-                            <th style="color: var(--threat-red);">Category</th>
+                            <th style="color: var(--threat-red);">Decision Logic</th>
                             <th style="color: var(--threat-red);">Status</th>
                         </tr>
                     </thead>
@@ -178,7 +191,7 @@
                         <tr>
                             <th style="color: var(--hacker-green);">TXN_ID</th>
                             <th style="color: var(--hacker-green);">Amount</th>
-                            <th style="color: var(--hacker-green);">Category</th>
+                            <th style="color: var(--hacker-green);">Decision Logic</th>
                             <th style="color: var(--hacker-green);">Status</th>
                         </tr>
                     </thead>
@@ -206,33 +219,29 @@
             .then(res => res.json())
             .then(data => {
                 document.getElementById('dashboard').style.display = 'block';
-                
-                // Update all three scoreboards properly
                 document.getElementById('val-processed').innerText = data.processed;
-                document.getElementById('val-safe').innerText = parseInt(data.processed) - parseInt(data.frauds_count);
+                document.getElementById('val-safe').innerText = data.safe_count;
                 document.getElementById('val-frauds').innerText = data.frauds_count;
                 
-                // Inject Fraud Rows
                 const fraudBody = document.getElementById('table-body-fraud');
                 fraudBody.innerHTML = '';
                 data.alerts.forEach(alert => {
                     const row = `<tr class="fraud-row">
                         <td>${alert.txn_id}</td>
                         <td style="font-weight: bold;">${alert.amount}</td>
-                        <td>${alert.category}</td>
+                        <td class="reason-text">${alert.reason}</td>
                         <td><span class="badge-fraud">BREACH</span></td>
                     </tr>`;
                     fraudBody.innerHTML += row;
                 });
 
-                // Inject Safe Rows
                 const safeBody = document.getElementById('table-body-safe');
                 safeBody.innerHTML = '';
                 data.safe.forEach(safe => {
                     const row = `<tr class="safe-row">
                         <td>${safe.txn_id}</td>
                         <td style="font-weight: bold; color: white;">${safe.amount}</td>
-                        <td>${safe.category}</td>
+                        <td class="reason-text">${safe.reason}</td>
                         <td><span class="badge-safe">CLEARED</span></td>
                     </tr>`;
                     safeBody.innerHTML += row;

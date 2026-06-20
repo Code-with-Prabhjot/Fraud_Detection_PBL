@@ -33,7 +33,6 @@ void loadTrainingData(const char *filename) {
     if (!fp) { printf("PROCESSED:0|FRAUDS:0\n"); exit(1); }
     char line[1024];
     fgets(line, sizeof(line), fp);
-    
     while (fgets(line, sizeof(line), fp)) {
         char temp[1024]; strcpy(temp, line);
         temp[strcspn(temp, "\n")] = 0;
@@ -121,7 +120,6 @@ void freeTree(Node *root) {
     freeTree(root->left); freeTree(root->right); free(root);
 }
 
-// Recursively builds a JSON string of the decision tree
 void treeToJson(Node *r, char *buf, int bsz) {
     if (!r) { strncat(buf, "null", bsz - strlen(buf) - 1); return; }
     if (r->isLeaf) {
@@ -143,17 +141,16 @@ int main(int argc, char *argv[]) {
     int used[FEATURES] = {0};
     Node *tree = buildTree(set1, s1, used);
 
-    // NEW FLAG: If Flask asks for the tree, export it and exit immediately
     if (argc > 1 && strcmp(argv[1], "--tree") == 0) {
         char json[524288]; json[0] = 0;
         treeToJson(tree, json, sizeof(json));
         printf("%s\n", json);
-        freeTree(tree);
-        return 0;
+        freeTree(tree); return 0;
     }
 
     FILE *batch_fp = fopen("backend_data.csv", "r");
-    FILE *alert_fp = fopen("fraud_alerts.log", "w");
+    // NEW: We write to sweep_results to capture BOTH Safe and Fraud
+    FILE *alert_fp = fopen("sweep_results.log", "w");
     if (!batch_fp || !alert_fp) { printf("PROCESSED:0|FRAUDS:0\n"); return 1; }
 
     char line[1024]; int total = 0, frauds = 0, input[FEATURES];
@@ -177,8 +174,22 @@ int main(int argc, char *argv[]) {
         if (input[4]) risk+=30; if (input[2]) risk+=15; if (input[5]) risk+=10;
         if (risk >= 40) result = 1;
 
+        // XAI ENGINE: Generate the reasoning string
+        char reason[256] = "";
+        if (result == 1) {
+            frauds++;
+            if (input[4]) strcat(reason, "[IP_BLACKLIST] ");
+            if (input[2]) strcat(reason, "[UNREC_DEVICE] ");
+            if (input[0] && input[3]) strcat(reason, "[HIGH_AMT_FOREIGN] ");
+            if (strlen(reason) == 0) strcpy(reason, "[NEURAL_ANOMALY]");
+            fprintf(alert_fp, "%s|%d|%02d:00|%s|FRAUD|%s\n", txn_id, amount, hour, cat, reason);
+        } else {
+            if (input[0]) strcpy(reason, "High Amount Cleared");
+            else if (input[3]) strcpy(reason, "Foreign Travel Verified");
+            else strcpy(reason, "Standard Pattern");
+            fprintf(alert_fp, "%s|%d|%02d:00|%s|SAFE|%s\n", txn_id, amount, hour, cat, reason);
+        }
         total++;
-        if (result == 1) { frauds++; fprintf(alert_fp, "%s|%d|%02d:00|%s\n", txn_id, amount, hour, cat); }
     }
     
     fclose(batch_fp); fclose(alert_fp);
