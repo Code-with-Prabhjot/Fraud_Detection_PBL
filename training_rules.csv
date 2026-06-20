@@ -1,0 +1,9 @@
+Amount_Status,Time_Status,Device_Status,Location_Status,IP_Status,Category,Result
+High,Odd_Hours,Unrecognized,Foreign,Blacklisted,Crypto,Fraud
+Normal,Business,Recognized,Local,Safe,Retail,Safe
+High,Business,Recognized,Local,Safe,Retail,Safe
+Normal,Odd_Hours,Recognized,Local,Safe,Retail,Safe
+High,Odd_Hours,Recognized,Local,Blacklisted,Crypto,Fraud
+Normal,Business,Unrecognized,Local,Safe,Retail,Safe
+High,Business,Unrecognized,Foreign,Blacklisted,Retail,Fraud
+Normal,Odd_Hours,Unrecognized,Foreign,Safe,Crypto,Fraud

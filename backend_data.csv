@@ -1,0 +1,10 @@
+Txn_ID,Amount,Hour,Device,Location,IP,Category
+TXN-9901,12500,14,Recognized,Local,Safe,Retail
+TXN-9902,85400,02,Unrecognized,Foreign,Blacklisted,Crypto
+TXN-9903,3400,09,Recognized,Local,Safe,Retail
+TXN-9904,67000,15,Unrecognized,Local,Safe,Retail
+TXN-9905,92000,03,Recognized,Local,Blacklisted,Crypto
+TXN-9906,1500,11,Unrecognized,Local,Safe,Retail
+TXN-9907,54000,10,Unrecognized,Foreign,Blacklisted,Retail
+TXN-9908,125000,04,Unrecognized,Foreign,Safe,Crypto
+TXN-9999,850000,01,Unrecognized,Foreign,Blacklisted,Crypto
