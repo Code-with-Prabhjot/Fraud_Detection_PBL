@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Global Bank - Secure Transfer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        
+        .container { display: flex; gap: 30px; width: 100%; max-width: 950px; }
+        
+        /* Left Panel: Premium Neobank UI */
+        .card { 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 40px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            border: 1px solid rgba(255,255,255,0.6); flex: 1; position: relative;
+        }
+        
+        h2 { text-align: center; color: #0f172a; margin-top: 0; margin-bottom: 35px; font-weight: 800; letter-spacing: -0.5px; font-size: 28px; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; font-family: 'Inter', sans-serif; box-sizing: border-box; transition: all 0.3s ease; background: #f8fafc; color: #0f172a; }
+        input:focus, select:focus { border-color: #3b82f6; background: #ffffff; outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        
+        .pay-btn { width: 100%; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none; padding: 18px; font-size: 16px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; margin-top: 15px; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
+        .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(37, 99, 235, 0.3); }
+
+        .demo-toggle { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 12px 16px; border-radius: 8px; border: 1px dashed #cbd5e1; }
+        .demo-toggle span { font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+        
+        /* Right Panel: SOC Telemetry UI */
+        .telemetry { 
+            background: #050505; border-radius: 16px; padding: 35px; flex: 1; color: #00ff41; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 0 20px rgba(0, 255, 65, 0.05); 
+            border: 1px solid rgba(0, 255, 65, 0.2); font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 255, 65, 0.05) 0%, transparent 70%);
+        }
+        
+        .telemetry h3 { color: #ffffff; margin-top: 0; border-bottom: 1px dashed rgba(0, 255, 65, 0.3); padding-bottom: 15px; text-transform: uppercase; font-size: 15px; letter-spacing: 2px; }
+        .telemetry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 13px; margin-top: 25px; }
+        .t-item { display: flex; flex-direction: column; }
+        .t-label { color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+        .t-val { font-weight: 700; color: #00ff41; }
+        
+        .val-safe { color: #00ff41; }
+        .val-warn { color: #f59e0b; } /* Orange for Unrecognized Device on first load */
+        .val-threat { color: #ff003c; text-shadow: 0 0 8px rgba(255, 0, 60, 0.6); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        .success-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); border-radius: 16px; justify-content: center; align-items: center; flex-direction: column; color: #10b981; z-index: 10; animation: fadeIn 0.3s ease; }
+        .success-overlay h2 { color: #10b981; margin-bottom: 10px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        input[type="checkbox"] { appearance: none; width: 40px; height: 20px; background: #cbd5e1; border-radius: 20px; position: relative; cursor: pointer; outline: none; border: none; transition: 0.3s; }
+        input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
+        input[type="checkbox"]:checked { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);}
+        input[type="checkbox"]:checked::after { left: 22px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h2>Global Trust Bank</h2>
+            
+            <div class="form-group">
+                <label>Transfer Amount (INR)</label>
+                <input type="number" id="amount" placeholder="e.g. 25000" required>
+            </div>
+
+            <div class="form-group">
+                <label>Transaction Category</label>
+                <select id="category">
+                    <option value="Retail">Retail & Shopping</option>
+                    <option value="Groceries">Groceries</option>
+                    <option value="Utilities">Utilities & Bills</option>
+                    <option value="Wire_Transfer">Wire Transfer</option>
+                    <option value="Crypto">Cryptocurrency</option>
+                </select>
+            </div>
+            
+            <button class="pay-btn" onclick="submitPayment()">Authorize Payment</button>
+
+            <div class="demo-toggle">
+                <span>[DEMO] Threat Injector</span>
+                <input type="checkbox" id="threatToggle" onchange="updateTelemetry()"> 
+            </div>
+
+            <div class="success-overlay" id="successOverlay">
+                <h2>✓ Secure Transfer</h2>
+                <p style="color: #475569; font-weight: 600;">Transaction routed to processing queue.</p>
+            </div>
+        </div>
+
+        <div class="telemetry">
+            <h3>Live Auto-Telemetry</h3>
+            <div class="telemetry-grid">
+                <div class="t-item"><span class="t-label">Device State</span><span class="t-val" id="t-dev">Scanning...</span></div>
+                <div class="t-item"><span class="t-label">Location</span><span class="t-val" id="t-loc">Scanning...</span></div>
+                <div class="t-item"><span class="t-label">Network IP</span><span class="t-val" id="t-ip">Scanning...</span></div>
+                <div class="t-item"><span class="t-label">Category</span><span class="t-val val-safe" id="t-cat">Retail</span></div>
+                <div class="t-item"><span class="t-label">Behav. Anomaly</span><span class="t-val val-safe" id="t-beh">No</span></div>
+                <div class="t-item"><span class="t-label">New Beneficiary</span><span class="t-val val-safe" id="t-ben">No</span></div>
+                <div class="t-item"><span class="t-label">Rapid Txns</span><span class="t-val val-safe" id="t-rap">No</span></div>
+                <div class="t-item"><span class="t-label">Weekend Flag</span><span class="t-val val-safe" id="t-wknd">No</span></div>
+                <div class="t-item"><span class="t-label">Account Age</span><span class="t-val val-safe" id="t-acc">Established</span></div>
+                <div class="t-item"><span class="t-label">Login Fails</span><span class="t-val val-safe" id="t-fail">0</span></div>
+                <div class="t-item"><span class="t-label">Local Time</span><span class="t-val val-safe" id="t-hour">--:--</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. LIVE DATA OBJECT (Upgraded to sessionStorage)
+        let liveData = {
+            hour: new Date().getHours(),
+            weekend: ([0, 6].includes(new Date().getDay())) ? "Yes" : "No",
+            // Automatically resets when the tab is closed!
+            device: sessionStorage.getItem('global_bank_trusted_device') ? "Recognized" : "Unrecognized",
+            ip: "Detecting...",
+            locationDisplay: "Detecting...",
+            locationValue: "Local" // Default fallback
+        };
+
+        // 2. FETCH LIVE NETWORK IP & HIGH-PRECISION GEOLOCATION (With Demo Failsafe)
+        async function fetchLiveNetwork() {
+            // Step A: Grab the IP as a fast baseline
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const res = await fetch('https://ipinfo.io/json', { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                const data = await res.json();
+                liveData.ip = data.ip;
+                liveData.locationDisplay = `${data.city}, ${data.country}`;
+                liveData.locationValue = (data.country === "IN") ? "Local" : "Foreign";
+            } catch (err) {
+                liveData.ip = "127.0.0.1";
+                liveData.locationDisplay = "Localhost Bypass";
+            }
+            updateTelemetry(); 
+
+            // Step B: Ask for High-Precision GPS (Overrides the ISP City)
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async function(position) {
+                    try {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        // Upgraded to OpenStreetMap (Nominatim) - highly reliable
+                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                        const geoData = await geoRes.json();
+                        
+                        let city = geoData.address.city || geoData.address.town || geoData.address.state_district || "Bengaluru";
+                        
+                        liveData.locationDisplay = `${city}, IN`;
+                        liveData.locationValue = "Local";
+                        updateTelemetry();
+                    } catch(e) { 
+                        // ULTIMATE DEMO FAILSAFE: If API blocks localhost, force Bengaluru
+                        liveData.locationDisplay = "Bengaluru, IN";
+                        liveData.locationValue = "Local";
+                        updateTelemetry(); 
+                    }
+                }, function(error) {
+                    console.log("User denied GPS permission. Sticking to IP location.");
+                });
+            }
+        }
+
+        fetchLiveNetwork();
+
+        // 3. EXACT DIGITAL CLOCK
+        function setExactTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('t-hour').innerText = hours + ":" + minutes;
+            liveData.hour = now.getHours(); 
+        }
+        setExactTime();
+        setInterval(setExactTime, 10000); 
+
+        // 4. DYNAMIC UI UPDATER
+        function updateTelemetry() {
+            const isThreat = document.getElementById('threatToggle').checked;
+            const catSelect = document.getElementById('category').value;
+            const elements = document.querySelectorAll('.t-val');
+            
+            elements.forEach(el => { el.classList.remove('val-safe', 'val-threat', 'val-warn'); });
+
+            if(isThreat) {
+                document.getElementById('t-dev').innerText = "Unrecognized";
+                document.getElementById('t-loc').innerText = "Foreign Server";
+                document.getElementById('t-ip').innerText = "Blacklisted (TOR)";
+                document.getElementById('t-cat').innerText = catSelect;
+                document.getElementById('t-beh').innerText = "Yes";
+                document.getElementById('t-ben').innerText = "Yes";
+                document.getElementById('t-rap').innerText = "Yes";
+                document.getElementById('t-wknd').innerText = liveData.weekend;
+                document.getElementById('t-acc').innerText = "New";
+                document.getElementById('t-fail').innerText = "Multiple";
+                
+                elements.forEach(el => el.classList.add('val-threat'));
+                document.getElementById('t-hour').classList.remove('val-threat'); // Keep time green
+                document.getElementById('t-hour').classList.add('val-safe');
+            } else {
+                document.getElementById('t-dev').innerText = liveData.device;
+                document.getElementById('t-loc').innerText = liveData.locationDisplay;
+                document.getElementById('t-ip').innerText = liveData.ip;
+                document.getElementById('t-cat').innerText = catSelect;
+                document.getElementById('t-beh').innerText = "No";
+                document.getElementById('t-ben').innerText = "No";
+                document.getElementById('t-rap').innerText = "No";
+                document.getElementById('t-wknd').innerText = liveData.weekend;
+                document.getElementById('t-acc').innerText = "Established";
+                document.getElementById('t-fail').innerText = "0";
+
+                document.getElementById('t-dev').classList.add(liveData.device === "Recognized" ? 'val-safe' : 'val-warn');
+                document.getElementById('t-loc').classList.add(liveData.locationValue === "Local" ? 'val-safe' : 'val-warn');
+                document.getElementById('t-ip').classList.add('val-safe');
+                document.getElementById('t-cat').classList.add('val-safe');
+                document.getElementById('t-beh').classList.add('val-safe');
+                document.getElementById('t-ben').classList.add('val-safe');
+                document.getElementById('t-rap').classList.add('val-safe');
+                document.getElementById('t-wknd').classList.add(liveData.weekend === "No" ? 'val-safe' : 'val-warn');
+                document.getElementById('t-acc').classList.add('val-safe');
+                document.getElementById('t-fail').classList.add('val-safe');
+                document.getElementById('t-hour').classList.add('val-safe');
+            }
+        }
+
+        document.getElementById('category').addEventListener('change', updateTelemetry);
+
+        // 5. MANUAL RESET BUTTON
+        function resetDemoDevice() {
+            sessionStorage.removeItem('global_bank_trusted_device');
+            liveData.device = "Unrecognized";
+            updateTelemetry();
+        }
+
+        // 6. SUBMIT PAYMENT API
+        function submitPayment() {
+            const amount = document.getElementById('amount').value;
+            const category = document.getElementById('category').value;
+            const isThreat = document.getElementById('threatToggle').checked;
+            
+            if(!amount) return alert("Please enter an amount.");
+
+            const payload = {
+                amount: amount,
+                hour: liveData.hour,
+                category: category,
+                device: isThreat ? "Unrecognized" : liveData.device,
+                location: isThreat ? "Foreign" : liveData.locationValue,
+                ip: isThreat ? "Blacklisted" : liveData.ip, 
+                beh_anom: isThreat ? "Yes" : "No",
+                new_ben: isThreat ? "Yes" : "No",
+                rap_txn: isThreat ? "Yes" : "No",
+                wknd: liveData.weekend,
+                new_acc: isThreat ? "Yes" : "No",
+                fail_log: isThreat ? "Yes" : "No"
+            };
+
+            fetch('/api/pay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(res => res.json()).then(data => {
+                document.getElementById('successOverlay').style.display = 'flex';
+                
+                // Set the TEMPORARY Cookie. Automatically wiped when tab closes.
+                sessionStorage.setItem('global_bank_trusted_device', 'true');
+
+                setTimeout(() => {
+                    document.getElementById('successOverlay').style.display = 'none';
+                    document.getElementById('amount').value = '';
+                    liveData.device = "Recognized"; 
+                    updateTelemetry();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

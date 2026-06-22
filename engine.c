@@ -89,7 +89,6 @@ Node* buildTree(int indices[], int size, int used[]) {
     int pure = 1, first = data[indices[0]][FEATURES];
     for (int i = 1; i < size; i++) { if (data[indices[i]][FEATURES] != first) pure = 0; }
     if (pure) return createNode(-1, 1, first);
-    
     int feature = bestFeature(indices, size, used);
     if (feature < 0) return createNode(-1, 1, majorityLabel(indices, size));
 
@@ -98,10 +97,8 @@ Node* buildTree(int indices[], int size, int used[]) {
     for (int i = 0; i < size; i++) {
         if (data[indices[i]][feature] == 0) left[l++] = indices[i]; else right[r++] = indices[i];
     }
-    
     int l_used[FEATURES], r_used[FEATURES];
-    memcpy(l_used, used, sizeof(l_used));
-    memcpy(r_used, used, sizeof(r_used));
+    memcpy(l_used, used, sizeof(l_used)); memcpy(r_used, used, sizeof(r_used));
     l_used[feature] = 1; r_used[feature] = 1;
 
     root->left = buildTree(left, l, l_used); 
@@ -128,10 +125,8 @@ void treeToJson(Node *r, char *buf, int bsz) {
     }
     char node[256]; snprintf(node, sizeof(node), "{\"name\":\"%s\",\"type\":\"split\",\"children\":[", featureNames[r->feature]);
     strncat(buf, node, bsz - strlen(buf) - 1);
-    treeToJson(r->left, buf, bsz); 
-    strncat(buf, ",", bsz - strlen(buf) - 1);
-    treeToJson(r->right, buf, bsz); 
-    strncat(buf, "]}", bsz - strlen(buf) - 1);
+    treeToJson(r->left, buf, bsz); strncat(buf, ",", bsz - strlen(buf) - 1);
+    treeToJson(r->right, buf, bsz); strncat(buf, "]}", bsz - strlen(buf) - 1);
 }
 
 int main(int argc, char *argv[]) {
@@ -142,43 +137,50 @@ int main(int argc, char *argv[]) {
     Node *tree = buildTree(set1, s1, used);
 
     if (argc > 1 && strcmp(argv[1], "--tree") == 0) {
-        char json[524288]; json[0] = 0;
-        treeToJson(tree, json, sizeof(json));
-        printf("%s\n", json);
-        freeTree(tree); return 0;
+        char json[524288]; json[0] = 0; treeToJson(tree, json, sizeof(json));
+        printf("%s\n", json); freeTree(tree); return 0;
     }
 
     FILE *batch_fp = fopen("backend_data.csv", "r");
-    // NEW: We write to sweep_results to capture BOTH Safe and Fraud
     FILE *alert_fp = fopen("sweep_results.log", "w");
     if (!batch_fp || !alert_fp) { printf("PROCESSED:0|FRAUDS:0\n"); return 1; }
 
     char line[1024]; int total = 0, frauds = 0, input[FEATURES];
-    fgets(line, sizeof(line), batch_fp);
+    fgets(line, sizeof(line), batch_fp); // Skip header
     while (fgets(line, sizeof(line), batch_fp)) {
-        char temp_line[1024]; strcpy(temp_line, line);
-        temp_line[strcspn(temp_line, "\n")] = 0;
+        char temp_line[1024]; strcpy(temp_line, line); temp_line[strcspn(temp_line, "\n")] = 0;
+        
+        // Read all 13 columns
         char *txn_id = strtok(temp_line, ",");
         int amount = atoi(strtok(NULL, ",")); int hour = atoi(strtok(NULL, ","));
         char *device = strtok(NULL, ","); char *loc = strtok(NULL, ",");
         char *ip = strtok(NULL, ","); char *cat = strtok(NULL, ",");
+        char *beh_anom = strtok(NULL, ","); char *new_ben = strtok(NULL, ",");
+        char *rap_txn = strtok(NULL, ","); char *wknd = strtok(NULL, ",");
+        char *new_acc = strtok(NULL, ","); char *fail_log = strtok(NULL, ",");
 
         input[0] = (amount > 50000) ? 1 : 0; input[1] = (hour < 6 || hour > 22) ? 1 : 0;
         input[2] = (strcmp(device, "Unrecognized") == 0) ? 1 : 0; input[3] = (strcmp(loc, "Foreign") == 0) ? 1 : 0;
         input[4] = (strcmp(ip, "Blacklisted") == 0) ? 1 : 0; input[5] = (strcmp(cat, "Crypto") == 0) ? 1 : 0;
-        input[6]=0; input[7]=0; input[8]=0; input[9]=0; input[10]=0; input[11]=0;
+        input[6] = (strcmp(beh_anom, "Yes") == 0) ? 1 : 0; input[7] = (strcmp(new_ben, "Yes") == 0) ? 1 : 0;
+        input[8] = (strcmp(rap_txn, "Yes") == 0) ? 1 : 0; input[9] = (strcmp(wknd, "Yes") == 0) ? 1 : 0;
+        input[10] = (strcmp(new_acc, "Yes") == 0) ? 1 : 0; input[11] = (strcmp(fail_log, "Yes") == 0) ? 1 : 0;
 
         int result = predict(tree, input);
+        
+        // Heuristic Override
         int risk = 0;
         if (input[0]) risk+=20; if (input[1]) risk+=10; if (input[3]) risk+=15;
         if (input[4]) risk+=30; if (input[2]) risk+=15; if (input[5]) risk+=10;
+        if (input[6]) risk+=20; if (input[8]) risk+=15; if (input[11]) risk+=25;
         if (risk >= 40) result = 1;
 
-        // XAI ENGINE: Generate the reasoning string
+        // XAI Logging
         char reason[256] = "";
         if (result == 1) {
             frauds++;
             if (input[4]) strcat(reason, "[IP_BLACKLIST] ");
+            if (input[11]) strcat(reason, "[FAILED_LOGINS] ");
             if (input[2]) strcat(reason, "[UNREC_DEVICE] ");
             if (input[0] && input[3]) strcat(reason, "[HIGH_AMT_FOREIGN] ");
             if (strlen(reason) == 0) strcpy(reason, "[NEURAL_ANOMALY]");
@@ -194,6 +196,5 @@ int main(int argc, char *argv[]) {
     
     fclose(batch_fp); fclose(alert_fp);
     printf("PROCESSED:%d|FRAUDS:%d\n", total, frauds);
-    freeTree(tree); 
-    return 0;
+    freeTree(tree); return 0;
 }
